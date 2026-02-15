@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gpp-deployer
+  namespace: {{NAMESPACE}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gpp-tenant-deployer
+  namespace: {{NAMESPACE}}
+rules:
+  # Knative Serving (ksvc)
+  - apiGroups: ["serving.knative.dev"]
+    resources: ["services", "routes", "configurations", "revisions"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # 参照系（デバッグ用に最低限）
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "events"]
+    verbs: ["get", "list", "watch"]
+
+  # アプリ設定用（必要最低限）
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gpp-tenant-deployer
+  namespace: {{NAMESPACE}}
+subjects:
+  - kind: ServiceAccount
+    name: gpp-deployer
+    namespace: {{NAMESPACE}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gpp-tenant-deployer
