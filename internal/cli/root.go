@@ -21,6 +21,8 @@ func Execute() error {
 		return tenantCmd(os.Args[2:])
 	case "deploy":
 		return deployCmd(os.Args[2:])
+	case "status":
+		return statusCmd(os.Args[2:])
 	default:
 		usage()
 		return fmt.Errorf("unknown command: %s", os.Args[1])
