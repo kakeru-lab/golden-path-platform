@@ -1,0 +1,14 @@
+apiVersion: gpp.dev/v1alpha1
+kind: App
+metadata:
+  name: hello
+  namespace: tenant-a
+spec:
+  image: ghcr.io/kakeru-lab/hello:latest
+  port: 8080
+  env:
+    - name: MESSAGE
+      value: "hello from gpp"
+  scale:
+    min: 0
+    max: 10
