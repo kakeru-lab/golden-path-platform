@@ -1,0 +1,20 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    gpp.dev/app: {{NAME}}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "{{MIN_SCALE}}"
+        autoscaling.knative.dev/maxScale: "{{MAX_SCALE}}"
+    spec:
+      containers:
+        - image: {{IMAGE}}
+          ports:
+            - containerPort: {{PORT}}
+          env:
+{{ENV_BLOCK}}
