@@ -13,3 +13,6 @@ var TenantLimitRange []byte
 
 //go:embed tenant/networkpolicy.yaml
 var TenantNetworkPolicy []byte
+
+//go:embed knative/service.yaml
+var KnativeServiceYAML []byte
