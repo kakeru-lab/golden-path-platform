@@ -1,0 +1,67 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gpp-default-deny
+  namespace: {{NAMESPACE}}
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress", "Egress"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gpp-allow-ingress-from-gateways
+  namespace: {{NAMESPACE}}
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        # ingress-nginx / knative / kourier / istio など “入口” になりがちなnamespaceを許可
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values: ["ingress-nginx", "knative-serving", "kourier-system", "istio-system"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gpp-allow-dns
+  namespace: {{NAMESPACE}}
+spec:
+  podSelector: {}
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values: ["kube-system"]
+          podSelector:
+            matchExpressions:
+              - key: k8s-app
+                operator: In
+                values: ["kube-dns"]
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values: ["kube-system"]
+          podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values: ["coredns"]
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
