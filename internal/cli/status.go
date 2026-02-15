@@ -7,8 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/<your-module>/golden-path-platform/internal/kube"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/kakeru-lab/golden-path-platform/internal/kube"
 )
 
 func statusCmd(args []string) error {
@@ -35,7 +34,6 @@ func statusCmd(args []string) error {
 		return err
 	}
 
-	// Knative Serviceは dynamic で読む（ApplyYAMLで dynamic を使ってるので同様に）
 	u, err := kube.GetUnstructured(context.Background(), kc, "serving.knative.dev", "v1", "services", ns, name)
 	if err != nil {
 		return err
@@ -74,7 +72,6 @@ func digString(obj map[string]any, path ...string) string {
 }
 
 func digCondition(obj map[string]any, statusKey, condKey, condType string) string {
-	// status.conditions[] から type==Ready を探す
 	status, ok := obj[statusKey].(map[string]any)
 	if !ok {
 		return "unknown"
