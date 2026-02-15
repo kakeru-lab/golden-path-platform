@@ -16,6 +16,8 @@ func tenantCmd(args []string) error {
 	switch args[0] {
 	case "create":
 		return tenantCreate(args[1:])
+	case "kubeconfig":
+        return tenantKubeconfig(args[1:])
 	default:
 		return fmt.Errorf("unknown tenant subcommand: %s", args[0])
 	}
